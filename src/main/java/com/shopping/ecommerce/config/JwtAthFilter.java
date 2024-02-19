@@ -1,13 +1,12 @@
 package com.shopping.ecommerce.config;
 
-import com.shopping.ecommerce.dao.UserDAO;
-import com.shopping.ecommerce.model.Customer;
 import com.shopping.ecommerce.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,7 +23,7 @@ public class JwtAthFilter extends OncePerRequestFilter {
     @Autowired
     CustomerService customerService;
     @Autowired
-UserDAO userDAO;
+    UserDetailsService userDetailsService;
     private final  JwtUtil jwtUtil;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,7 +39,7 @@ UserDAO userDAO;
         jwtToken=authHeader.substring(7);
         userEmail=jwtUtil.extractUsername(jwtToken);
         if(userEmail!=null&& SecurityContextHolder.getContext().getAuthentication()==null){
-            userDetails= userDAO.findUserByEmail(userEmail);
+            userDetails= userDetailsService.loadUserByUsername(userEmail);
             final boolean isTokenValid= jwtUtil.isTokenValid(jwtToken,userDetails);
             if(isTokenValid){
                UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());

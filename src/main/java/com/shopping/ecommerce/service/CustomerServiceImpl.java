@@ -10,15 +10,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @Transactional
 @Slf4j
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerService, UserDetailsService {
 
     @Autowired
     CustomerRepository Cr;
@@ -107,4 +114,19 @@ public class CustomerServiceImpl implements CustomerService {
         return Cr.save(customer);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("getting Customer by username");
+        Customer customer = Cr.findByCustomerUserName(username);
+        if (customer == null) {
+            log.error("User not found");
+            throw new UsernameNotFoundException("UserNot found");
+        }
+        List<SimpleGrantedAuthority> authorityCollections = new ArrayList<SimpleGrantedAuthority>();
+        customer.getRole().forEach(role -> {
+            authorityCollections.add(new SimpleGrantedAuthority(role.getName()));
+        });
+        return new User(customer.getCustomerUserName(), customer.getCustomerPassword(), authorityCollections);
+
+    }
 }

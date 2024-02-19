@@ -1,7 +1,6 @@
 package com.shopping.ecommerce.controller;
 
 import com.shopping.ecommerce.config.JwtUtil;
-import com.shopping.ecommerce.dao.UserDAO;
 import com.shopping.ecommerce.dto.AuthenticationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +23,13 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 public class AuthorizationController {
     private final AuthenticationManager authenticationManager;
-    private final UserDAO userDAO;
+    private final UserDetailsService userDAO;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/authenticate")
     public ResponseEntity<String> authenticate(@RequestBody AuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        final UserDetails userDetails = userDAO.findUserByEmail(request.getEmail());
+        final UserDetails userDetails = userDAO.loadUserByUsername(request.getEmail());
         if (userDetails != null) {
             Map<String, Object> claims = new HashMap<>();
             claims.put("roles", userDetails.getAuthorities());

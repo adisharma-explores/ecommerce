@@ -11,15 +11,12 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role implements GrantedAuthority {
+public class Role  {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String name;
 
-    @Override
-    public String getAuthority() {
-        return name;
-    }
+
 }
