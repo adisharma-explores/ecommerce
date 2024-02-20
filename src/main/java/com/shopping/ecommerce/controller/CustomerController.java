@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/apis/v2")
 public class CustomerController {
 private final AuthenticationManager authenticationManager;
 private final UserDetailsService userDetailsService;
@@ -59,8 +60,9 @@ private final UserDetailsService userDetailsService;
     }
     return "Cant login! Invalid credentials";
   }
-  @PreAuthorize("hasAuthority('SCOPE_profile.read')")
+//  @PreAuthorize("hasAuthority('SCOPE_profile.read')")
   @GetMapping("/getCustomers")
+//  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public List<Customer> getCustomer() {
 
     return Cs.getCustomers();
