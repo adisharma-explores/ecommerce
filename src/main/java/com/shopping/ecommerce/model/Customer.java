@@ -43,9 +43,7 @@ public class Customer {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> role = new ArrayList<>();
 
-    @Size(min = 8, max = 15, message = "password should be within 8 to 15 characters")
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-]).{8,15}$", message = "password should contain at least 8 characters with At least one uppercase letter, one lowercase letter,one digit and a special character.")
-    private String customerPassword;
+   private String customerPassword;
 
     @OneToOne(cascade = {CascadeType.ALL})
     private Address address;

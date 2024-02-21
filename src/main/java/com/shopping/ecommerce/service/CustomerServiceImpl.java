@@ -6,6 +6,7 @@ import com.shopping.ecommerce.model.Customer;
 import com.shopping.ecommerce.model.Role;
 import com.shopping.ecommerce.repository.CustomerRepository;
 import com.shopping.ecommerce.repository.RoleRepo;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,6 +28,7 @@ import java.util.List;
 @Service
 @Transactional
 @Slf4j
+@NoArgsConstructor
 public class CustomerServiceImpl implements CustomerService, UserDetailsService {
 
     @Autowired
@@ -32,9 +36,11 @@ public class CustomerServiceImpl implements CustomerService, UserDetailsService 
     @Autowired
     private RoleRepo roleRepo;
 
+
     @Override
     public Customer registerCustomer(Customer customer) {
         log.info("Saving new Customer");
+        customer.setCustomerPassword(new BCryptPasswordEncoder().encode(customer.getCustomerPassword()));
         return Cr.save(customer);
     }
 
